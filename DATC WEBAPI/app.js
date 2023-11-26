@@ -1,9 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 require("dotenv").config();
+require("./db");
 const passport = require("passport");
 require("./passport.js")(passport);
-require("./db");
 
 const usersRouter = require("./routes/users");
 
