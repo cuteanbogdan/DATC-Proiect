@@ -4,19 +4,24 @@ require("dotenv").config();
 require("./db");
 const passport = require("passport");
 require("./passport.js")(passport);
+const cors = require("cors");
 
+// Routers
 const usersRouter = require("./routes/users");
+const tokenRouter = require("./routes/token");
 
 const app = express();
 
 // Body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
 app.use(passport.initialize());
 
 // Routes
 // Use the users router for any requests going to /api/users
 app.use("/api/users", usersRouter);
+app.use("/api/token", tokenRouter);
 
 app.get(
   "/protected",
