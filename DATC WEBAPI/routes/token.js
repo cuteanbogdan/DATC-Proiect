@@ -4,8 +4,6 @@ const passport = require("passport");
 
 // Token validation endpoint
 router.post("/validate", (req, res, next) => {
-  console.log("Authorization Header:", req.headers.authorization);
-
   passport.authenticate("jwt", { session: false }, (err, user, info) => {
     if (err) {
       return res.status(500).json({ msg: err.message });
