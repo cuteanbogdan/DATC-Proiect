@@ -5,10 +5,11 @@ require("./db");
 const passport = require("passport");
 require("./passport.js")(passport);
 const cors = require("cors");
-//test branch
+
 // Routers
-const usersRouter = require("./routes/users");
+const authRouter = require("./routes/auth");
 const tokenRouter = require("./routes/token");
+const dashboardRouter = require("./routes/dashboard");
 
 const app = express();
 
@@ -19,9 +20,9 @@ app.use(cors());
 app.use(passport.initialize());
 
 // Routes
-// Use the users router for any requests going to /api/users
-app.use("/api/users", usersRouter);
+app.use("/api/auth", authRouter);
 app.use("/api/token", tokenRouter);
+app.use("/api/dashboard", dashboardRouter);
 
 app.get(
   "/protected",

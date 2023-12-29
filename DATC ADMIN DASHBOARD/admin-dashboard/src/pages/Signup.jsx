@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import validateToken from "../utils/tokenValidation";
 import toastifyOptions from "../utils/toastifyOptions";
-import "react-toastify/dist/ReactToastify.css";
+import { Toast } from "../utils/toastUtil";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -24,11 +24,21 @@ const Signup = () => {
     checkToken();
   }, [navigate]);
 
+  function displayErrorMessages(data) {
+    if (data.errors && data.errors.length > 0) {
+      data.errors.forEach((error) => {
+        toast.error(error.msg, toastifyOptions);
+      });
+    } else if (data.msg) {
+      toast.error(data.msg, toastifyOptions);
+    }
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5000/api/users/signup", {
+      const response = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,7 +56,7 @@ const Signup = () => {
 
         navigate("/");
       } else {
-        toast.error(data.msg, toastifyOptions);
+        displayErrorMessages(data);
       }
     } catch (error) {
       toast.error(error.message || "An error occurred", toastifyOptions);
@@ -61,18 +71,7 @@ const Signup = () => {
             Create Your Account
           </h2>
         </div>
-        <ToastContainer
-          position="bottom-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable={false}
-          pauseOnHover
-          theme="light"
-        />
+        <Toast />
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
