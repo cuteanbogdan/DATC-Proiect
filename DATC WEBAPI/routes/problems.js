@@ -27,23 +27,47 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      const { coord, numarRaportari, categorie } = req.body;
-      if (!coord || !numarRaportari || !categorie) {
+      const { coord, categorie } = req.body;
+      if (!coord || !categorie) {
         return res.status(400).json({ msg: "Missing required fields" });
       }
 
-      // Create a new reported problem
-      const newProblem = new ReportedProblems({
-        coord,
-        numarRaportari,
-        categorie,
+      // 30m / 111139
+      const proximityThreshold = 0.00027;
+
+      // Find problems within the approximate radius and same category
+      const existingProblems = await ReportedProblems.find({
+        categorie: categorie,
+        "coord.lat": {
+          $gte: coord.lat - proximityThreshold,
+          $lte: coord.lat + proximityThreshold,
+        },
+        "coord.lng": {
+          $gte: coord.lng - proximityThreshold,
+          $lte: coord.lng + proximityThreshold,
+        },
       });
-      await newProblem.save();
-      res.status(201).json(newProblem);
+
+      let problemToSave;
+
+      if (existingProblems && existingProblems.length > 0) {
+        problemToSave = existingProblems[0];
+        problemToSave.numarRaportari += 1;
+      } else {
+        // Create a new problem
+        problemToSave = new ReportedProblems({
+          coord,
+          numarRaportari: 1,
+          categorie,
+        });
+      }
+
+      await problemToSave.save();
+      res.json(problemToSave);
     } catch (error) {
       console.error(error);
-      res.status(400).json({
-        msg: "Error saving the reported problem",
+      res.status(500).json({
+        msg: "Error processing the reported problem",
         error: error.message,
       });
     }
@@ -87,13 +111,12 @@ router.delete(
   async (req, res) => {
     try {
       const problemId = req.params.id;
-      const problem = await ReportedProblems.findById(problemId);
+      const result = await ReportedProblems.findByIdAndDelete(problemId);
 
-      if (!problem) {
+      if (!result) {
         return res.status(404).json({ msg: "Problem not found" });
       }
 
-      await problem.remove();
       res.json({ msg: "Problem deleted successfully" });
     } catch (error) {
       console.error(error);
