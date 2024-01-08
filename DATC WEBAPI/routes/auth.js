@@ -30,7 +30,7 @@ router.post("/login", async (req, res) => {
     jwt.sign(
       payload,
       process.env.SECRETJWT,
-      { expiresIn: 3600 },
+      { expiresIn: 3600 * 24 * 60 }, //2 months
       (err, token) => {
         if (err) throw err;
         res.json({ token });
@@ -58,7 +58,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
     try {
-      const { email, password } = req.body;
+      const { email, password, nume, prenume } = req.body;
 
       let user = await User.findOne({ email });
       if (user) {
@@ -71,6 +71,8 @@ router.post(
       user = new User({
         email,
         password: hashedPassword,
+        nume,
+        prenume,
       });
 
       await user.save();
@@ -87,7 +89,7 @@ router.post(
       jwt.sign(
         payload,
         process.env.SECRETJWT,
-        { expiresIn: 3600 },
+        { expiresIn: 3600 * 24 * 60 }, //2 months
         (err, token) => {
           if (err) throw err;
           res.json({ token });
