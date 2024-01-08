@@ -23,6 +23,11 @@ const ReportedProblemsSchema = new mongoose.Schema({
   },
 });
 
+ReportedProblemsSchema.index(
+  { "coord.lat": 1, "coord.lng": 1 },
+  { "2d": "2d" }
+);
+
 module.exports = ReportedProblems = mongoose.model(
   "reportedproblems",
   ReportedProblemsSchema
