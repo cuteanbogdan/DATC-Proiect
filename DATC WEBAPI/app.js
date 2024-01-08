@@ -10,6 +10,7 @@ const cors = require("cors");
 const authRouter = require("./routes/auth");
 const tokenRouter = require("./routes/token");
 const dashboardRouter = require("./routes/dashboard");
+const problemsRouter = require("./routes/problems");
 
 const app = express();
 
@@ -23,14 +24,7 @@ app.use(passport.initialize());
 app.use("/api/auth", authRouter);
 app.use("/api/token", tokenRouter);
 app.use("/api/dashboard", dashboardRouter);
-
-app.get(
-  "/protected",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    res.json({ msg: "Access granted to protected resource" });
-  }
-);
+app.use("/api/problems", problemsRouter);
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Server running on port ${port}`));

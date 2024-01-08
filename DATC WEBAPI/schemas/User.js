@@ -13,7 +13,21 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
+    required: true,
     default: "user",
+  },
+  nume: {
+    type: String,
+    required: true,
+  },
+  prenume: {
+    type: String,
+    required: true,
+  },
+  points: {
+    type: Number,
+    required: true,
+    default: 0,
   },
 });
 
