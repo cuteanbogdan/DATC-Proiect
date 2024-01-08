@@ -7,7 +7,7 @@ const MapComponent = () => {
   useEffect(() => {
     map.current = new window.google.maps.Map(mapRef.current, {
       center: { lat: 45.75, lng: 21.22 },
-      zoom: 15,
+      zoom: 20,
       styles: [
         {
           featureType: "poi",
